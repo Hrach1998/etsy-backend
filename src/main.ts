@@ -8,15 +8,14 @@ async function bootstrap() {
   // ✅ Enable CORS for production
   app.enableCors({
     origin: [
-      'https://zingy-blini-8a5ea5.netlify.app', // Ձեր Netlify frontend
-      'http://localhost:4200'                   // Local development
+      'https://zingy-blini-8a5ea5.netlify.app', // Netlify frontend
+      'http://localhost:4200',                   // Local development
+      'http://localhost:3000',                   // Local backend
+      '*'                                        // All origins (development)
     ],
-    credentials: true
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With'
   });
-  
-  // ✅ Railway-ը տալիս է PORT environment variable
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  console.log(`🚀 Backend server is running on port ${port}`);
 }
 bootstrap();
