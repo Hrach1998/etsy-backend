@@ -8,7 +8,7 @@ async function bootstrap() {
   // ✅ Enable CORS for production
   app.enableCors({
     origin: [
-      'https://zingy-blini-8a5ea5.netlify.app', // Netlify frontend
+      'https://etsy-backend-q2w1.onrender.com', // Netlify frontend
       'http://localhost:4200',                   // Local development
       'http://localhost:3000'                    // Local backend
     ],
