@@ -5,19 +5,21 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // ✅ Enable CORS for production
+  // ✅ Enable CORS
   app.enableCors({
     origin: [
-      'https://etsy-backend-q2w1.onrender.com', // Netlify frontend
-      'http://localhost:4200',                   // Local development
-      'http://localhost:3000'                    // Local backend
+      'https://zingy-blini-8a5ea5.netlify.app',
+      'http://localhost:3000',
+      'http://localhost:4200'
     ],
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
-    allowedHeaders: 'Content-Type, Authorization, X-Requested-With'
+    allowedHeaders: 'Content-Type, Authorization, X-Requested-With, Accept, Origin'
   });
 
-  // ✅ ADD THIS - Start the server
+  // ✅ Global prefix for API routes - IMPORTANT
+  app.setGlobalPrefix('api');
+
   const port = process.env.PORT || 3000;
   await app.listen(port);
   console.log(`🚀 Backend server is running on port ${port}`);
