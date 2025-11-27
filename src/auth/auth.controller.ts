@@ -1,18 +1,42 @@
 // src/auth/auth.controller.ts - ԱՄԲՈՂՋԱԿԱՆ ՈՒՂՂՎԱԾ
 import { Controller, Post, Body, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { InjectModel } from '@nestjs/mongoose'; // ✅ Ավելացնել
-import { Model } from 'mongoose'; // ✅ Ավելացնել
-import { User } from './schemas/user.schema'; // ✅ Ավելացնել
-import * as bcrypt from 'bcrypt'; // ✅ Ավելացնել
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from './schemas/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    @InjectModel(User.name) private userModel: Model<User>, // ✅ Ավելացնել
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
+  // ✅ ՆՈՐ ENDPOINT - Send verification code
+  @Post('send-verification')
+  async sendVerification(@Body() body: { email: string }) {
+    return this.authService.sendVerificationCode(body.email);
+  }
+
+  // ✅ ՆՈՐ ENDPOINT - Verify code and register
+  @Post('verify-and-register')
+  async verifyAndRegister(
+    @Body() body: { email: string; code: string; password: string; name: string },
+  ) {
+    return this.authService.verifyAndRegister(body);
+  }
+
+  // ✅ ՆՈՐ ENDPOINT - Test verification
+  @Get('test-verification')
+  testVerification() {
+    return { 
+      message: 'Email verification endpoints are working!', 
+      timestamp: new Date().toISOString() 
+    };
+  }
+
+  // ԳՈՅՈՒԹ ՈՒՆԵՑՈՂ ENDPOINTS-ները
   @Post('register')
   register(@Body() registerDto: any) {
     return this.authService.register(registerDto);
@@ -42,15 +66,12 @@ export class AuthController {
     return this.authService.getUserStats();
   }
 
-  // ✅ ԱՎԵԼԱՑՆԵԼ - SEED ENDPOINT
   @Post('seed')
   async seedDatabase() {
     try {
-      // Ստուգեք արդեն կա admin
       const existingAdmin = await this.userModel.findOne({ email: 'admin@parfume.fr' });
       
       if (!existingAdmin) {
-        // Ստեղծեք admin user
         const hashedPassword = await bcrypt.hash('admin123', 10);
         await this.userModel.create({
           name: 'Administrator',
